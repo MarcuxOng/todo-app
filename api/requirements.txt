@@ -14,3 +14,5 @@ python-multipart
 requests==2.32.4
 sqlalchemy==2.0.15
 uvicorn==0.22.0
+uvicorn[standard]
+websockets

@@ -19,14 +19,17 @@ export const Header = () => {
         {/* <h1 className="nav-brand">TodoApp</h1> */}
         <Link to="/" className="nav-brand">TodoApp</Link>
         <ul className="nav-menu">
-          {/* <li className="nav-item">
-            <Link to="/" className="nav-link">Home</Link>
-          </li> */}
           <li className="nav-item">
             <Link to="/tasks" className="nav-link">Tasks</Link>
           </li>
           <li className="nav-item">
             <Link to="/categories" className="nav-link">Categories</Link>
+          </li>
+          <li className="nav-item">
+            <Link to="/workspaces" className="nav-link">Workspaces</Link>
+          </li>
+          <li className="nav-item">
+            <Link to="/activity" className="nav-link">Activity</Link>
           </li>
           <li className="nav-item">
             <button

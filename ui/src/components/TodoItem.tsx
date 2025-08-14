@@ -1,6 +1,10 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './TodoList.css';
-import { Task } from '../types';
+import { Task, IComment } from '../types';
+import { commentService } from '../services/commentService';
+import CommentList from './CommentList';
+import AddCommentForm from './AddCommentForm';
+import ShareTaskForm from './ShareTaskForm';
 
 interface TodoItemProps {
   task: Task;
@@ -9,6 +13,32 @@ interface TodoItemProps {
 }
 
 const TodoItem: React.FC<TodoItemProps> = ({ task, onUpdateTask, onDeleteTask }) => {
+  const [comments, setComments] = useState<IComment[]>([]);
+  const [showComments, setShowComments] = useState(false);
+
+  const fetchComments = async () => {
+    if (showComments) {
+        try {
+            const fetchedComments = await commentService.getComments(task.id.toString());
+            setComments(fetchedComments);
+        } catch (error) {
+            console.error('Failed to fetch comments:', error);
+        }
+    }
+  };
+
+  useEffect(() => {
+    fetchComments();
+  }, [showComments]);
+
+  const handleToggleComments = () => {
+    setShowComments(!showComments);
+  };
+
+  const handleCommentAdded = () => {
+    fetchComments();
+  };
+
   return (
     <div className={`todo-item ${task.is_completed ? 'completed' : ''}`}>
       <input
@@ -18,6 +48,18 @@ const TodoItem: React.FC<TodoItemProps> = ({ task, onUpdateTask, onDeleteTask })
       />
       <span>{task.title}</span>
       <button onClick={() => onDeleteTask(task.id)}>Delete</button>
+      <button onClick={handleToggleComments}>
+        {showComments ? 'Hide' : 'Show'} Comments
+      </button>
+      {showComments && (
+        <div>
+          <CommentList comments={comments} />
+          <AddCommentForm taskId={task.id.toString()} onCommentAdded={handleCommentAdded} />
+          <ShareTaskForm taskId={task.id.toString()} onTaskShared={() => {
+            console.log('Task shared successfully');
+          }} />
+        </div>
+      )}
     </div>
   );
 };
