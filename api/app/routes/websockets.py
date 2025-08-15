@@ -1,21 +1,18 @@
-from fastapi import APIRouter, WebSocket, status
-from app.utils.security import verify_token
+from fastapi import APIRouter, Depends, WebSocket
+from sqlalchemy.orm import Session
+
+from app.database.database import get_db
+from app.database.models import User
+from app.utils.dep import get_current_websocket_user
+from app.workspace.endpoints import handle_websocket_connection
 
 router = APIRouter()
 
+
 @router.websocket("/ws")
-async def websocket_endpoint(websocket: WebSocket):
-    token = websocket.query_params.get("token")
-    if not token or not verify_token(token):
-        await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
-        return
-    
-    await websocket.accept()
-    try:
-        while True:
-            data = await websocket.receive_text()
-            # Broadcast or process messages here
-    except Exception as e:
-        print(f"WebSocket error: {e}")
-    finally:
-        await websocket.close()
+async def websocket_endpoint(
+    websocket: WebSocket,
+    user: User = Depends(get_current_websocket_user),
+    db: Session = Depends(get_db),
+):
+    await handle_websocket_connection(websocket, user, db)

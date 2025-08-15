@@ -1,3 +1,4 @@
+from typing import List
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
@@ -14,6 +15,14 @@ from app.services import workspace as workspace_service
 from app.utils.dep import get_current_user
 
 router = APIRouter(prefix="/workspaces", tags=["workspaces"])
+
+
+@router.get("", response_model=List[Workspace])
+async def get_workspaces(
+        db: Session = Depends(get_db),
+        current_user: User = Depends(get_current_user)
+):
+    return workspace_service.get_workspaces(db, current_user.id)
 
 
 @router.post("", response_model=Workspace)

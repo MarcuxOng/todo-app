@@ -43,6 +43,13 @@ def get_workspace(db: Session, workspace_id: int, user_id: int):
     return workspace
 
 
+def get_workspaces(db: Session, user_id: int):
+    workspaces = db.query(Workspace).filter(
+        Workspace.members.any(user_id=user_id)
+    ).all()
+    return workspaces
+
+
 def add_member(db: Session, workspace_id: int, user_id: int, adder_id: int, role: str):
     try:
         adder_membership = db.query(WorkspaceMember).filter(

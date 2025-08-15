@@ -43,6 +43,7 @@ class Category(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(50), unique=True)
+
     tasks: Mapped[list["Task"]] = relationship(secondary="task_categories", back_populates="categories")
 
 
@@ -127,4 +128,13 @@ class ActivityLog(Base):
     details: Mapped[dict] = mapped_column(JSON, nullable=True)
 
     user: Mapped["User"] = relationship(back_populates="activity_logs")
+
+    @hybrid_property
+    def description(self) -> str:
+        """Generate a human-readable description of the activity."""
+        if self.details and "name" in self.details:
+            return f"User '{self.user.username}' {self.action.replace('_', ' ')} {self.entity_type} '{self.details['name']}'"
+        return f"User '{self.user.username}' {self.action.replace('_', ' ')} a {self.entity_type}"
+
+
 

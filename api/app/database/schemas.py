@@ -175,5 +175,6 @@ class ActivityLog(ActivityLogBase):
     id: int
     user_id: int
     created_at: datetime
+    description: str
 
     model_config = ConfigDict(from_attributes=True)

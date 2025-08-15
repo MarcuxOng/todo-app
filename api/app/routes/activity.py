@@ -7,10 +7,10 @@ from app.database.schemas import ActivityLog
 from app.services import activity_log as activity_service
 from app.utils.dep import get_current_user
 
-router = APIRouter(prefix="/activity", tags=["activity"])
+router = APIRouter(prefix="/activities", tags=["activities"])
 
 
-@router.get("/me", response_model=list[ActivityLog])
+@router.get("", response_model=list[ActivityLog])
 def get_my_activity(
         limit: int = 100,
         db: Session = Depends(get_db),
